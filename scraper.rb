@@ -33,4 +33,5 @@ def scrape_list(url)
   end
 end
 
+ScraperWiki.sqliteexecute('DELETE FROM data') rescue nil
 scrape_list('https://en.wikipedia.org/wiki/List_of_MPs_of_the_National_Assembly_of_Cambodia')
