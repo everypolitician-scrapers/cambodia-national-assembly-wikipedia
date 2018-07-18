@@ -1,37 +1,59 @@
 #!/bin/env ruby
-# encoding: utf-8
 # frozen_string_literal: true
 
 require 'pry'
 require 'scraped'
 require 'scraperwiki'
+require 'wikidata_ids_decorator'
 
 require 'open-uri/cached'
 OpenURI::Cache.cache_path = '.cache'
 
-def noko_for(url)
-  Nokogiri::HTML(open(url).read)
-end
+class MembersPage < Scraped::HTML
+  decorator WikidataIdsDecorator::Links
 
-def scrape_list(url)
-  noko = noko_for(url)
-  rows = noko.xpath('//table[.//th[contains(.,"MP")]]//tr[td]')
-  raise 'No rows' if rows.count.zero?
-  rows.each do |tr|
-    td = tr.css('td')
-    data = {
-      name:           td[1].text.tidy,
-      wikiname:       td[1].xpath('.//a[not(@class="new")]/@title').text,
-      party:          td[2].text.tidy,
-      party_wikiname: td[2].xpath('.//a[not(@class="new")]/@title').text,
-      area:           td[1].xpath('preceding::h3/span[@class="mw-headline"]').last.text,
-      term:           5,
-      source:         url,
-    }
-    puts data.reject { |_, v| v.to_s.empty? }.sort_by { |k, _| k }.to_h if ENV['MORPH_DEBUG']
-    ScraperWiki.save_sqlite(%i(name area party term), data)
+  field :members do
+    member_rows.map { |row| fragment(row => MemberRow).to_h }
+  end
+
+  private
+
+  def member_tables
+    noko.xpath('//table[.//th[contains(.,"MP")]]')
+  end
+
+  def member_rows
+    member_tables.xpath('.//tr[td[2]]')
   end
 end
 
-ScraperWiki.sqliteexecute('DELETE FROM data') rescue nil
-scrape_list('https://en.wikipedia.org/wiki/List_of_MPs_of_the_National_Assembly_of_Cambodia')
+class MemberRow < Scraped::HTML
+  field :id do
+    tds[1].css('a/@wikidata').map(&:text).first
+  end
+
+  field :name do
+    tds[1].text.tidy
+  end
+
+  field :party do
+    tds[2].text.tidy
+  end
+
+  field :party_id do
+    tds[2].css('a/@wikidata').map(&:text).first
+  end
+
+  field :area do
+    noko.xpath('preceding::h3/span[@class="mw-headline"]').last.text
+  end
+
+  private
+
+  def tds
+    noko.css('td')
+  end
+end
+
+url = 'https://en.wikipedia.org/wiki/List_of_MPs_of_the_National_Assembly_of_Cambodia'
+Scraped::Scraper.new(url => MembersPage).store(:members, index: %i[name party area])
