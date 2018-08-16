@@ -19,7 +19,7 @@ class MembersPage < Scraped::HTML
   private
 
   def member_tables
-    noko.xpath('//table[.//th[contains(.,"MP")]]')
+    noko.xpath('//span[@id="Members"]//following::table[.//th[contains(.,"MP")]]')
   end
 
   def member_rows
