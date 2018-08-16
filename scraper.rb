@@ -55,5 +55,5 @@ class MemberRow < Scraped::HTML
   end
 end
 
-url = 'https://en.wikipedia.org/wiki/List_of_MPs_of_the_National_Assembly_of_Cambodia'
+url = 'https://en.wikipedia.org/wiki/List_of_members_of_the_National_Assembly_of_Cambodia,_2013%E2%80%9318'
 Scraped::Scraper.new(url => MembersPage).store(:members, index: %i[name party area])
