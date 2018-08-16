@@ -41,7 +41,7 @@ GIT
 
 GIT
   remote: https://github.com/everypolitician/wikidata-fetcher.git
-  revision: 0bef78c6f8070a66211c5a6ef78417f66483a50a
+  revision: bb6619238129be500b8d4652a10a959544700a05
   specs:
     wikidata-fetcher (0.21.0)
       colorize
@@ -98,7 +98,7 @@ GEM
     field_serializer (0.3.0)
     git (1.3.0)
     hashdiff (0.3.7)
-    hashie (3.5.7)
+    hashie (3.6.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     httpclient (2.8.3)
@@ -109,9 +109,9 @@ GEM
       faraday-cookie_jar (~> 0.0, >= 0.0.6)
       faraday_middleware (~> 0.10, >= 0.10.0)
     method_source (0.9.0)
-    mime-types (3.1)
+    mime-types (3.2.2)
       mime-types-data (~> 3.2015)
-    mime-types-data (3.2016.0521)
+    mime-types-data (3.2018.0812)
     mini_portile2 (2.3.0)
     minispec-metadata (2.0.0)
       minitest
@@ -134,7 +134,7 @@ GEM
     pry (0.11.3)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
-    public_suffix (3.0.2)
+    public_suffix (3.0.3)
     rainbow (3.0.0)
     rake (12.3.1)
     require_all (2.0.0)
@@ -142,7 +142,7 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
-    rubocop (0.58.1)
+    rubocop (0.58.2)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
       parser (>= 2.5, != 2.5.1.1)
@@ -150,7 +150,7 @@ GEM
       rainbow (>= 2.2.2, < 4.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (~> 1.0, >= 1.0.1)
-    ruby-progressbar (1.9.0)
+    ruby-progressbar (1.10.0)
     safe_yaml (1.0.4)
     sqlite3 (1.3.13)
     sqlite_magic (0.0.6)
@@ -175,7 +175,7 @@ GEM
     wikisnakker (0.9.1)
       require_all
       yajl-ruby
-    yajl-ruby (1.4.0)
+    yajl-ruby (1.4.1)
 
 PLATFORMS
   ruby
