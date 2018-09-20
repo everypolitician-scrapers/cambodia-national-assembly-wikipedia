@@ -5,12 +5,14 @@ require 'pry'
 require 'scraped'
 require 'scraperwiki'
 require 'wikidata_ids_decorator'
+require_relative 'lib/unspan_all_tables'
 
 require 'open-uri/cached'
 OpenURI::Cache.cache_path = '.cache'
 
 class MembersPage < Scraped::HTML
   decorator WikidataIdsDecorator::Links
+  decorator UnspanAllTables
 
   field :members do
     member_rows.map { |row| fragment(row => MemberRow).to_h }
@@ -19,7 +21,7 @@ class MembersPage < Scraped::HTML
   private
 
   def member_tables
-    noko.xpath('//span[@id="Members"]//following::table[.//th[contains(.,"MP")]]')
+    noko.xpath('//span[@id="List_of_members"]//following::table[.//th[contains(.,"Members")]]')
   end
 
   def member_rows
@@ -28,30 +30,43 @@ class MembersPage < Scraped::HTML
 end
 
 class MemberRow < Scraped::HTML
+  PARTIES = { # TODO: scrape these
+    '1E90FF' => { name: "Cambodian People's Party", id: 'Q769308' },
+    '0047AB' => { name: 'Cambodia National Rescue Party', id: 'Q5025162' },
+  }
+
   field :id do
-    tds[1].css('a/@wikidata').map(&:text).first
+    tds[3].css('a/@wikidata').map(&:text).first
   end
 
   field :name do
-    tds[1].text.tidy
+    tds[3].text.tidy
   end
 
   field :party do
-    tds[2].text.tidy
+    PARTIES[party_colour][:name]
   end
 
   field :party_id do
-    tds[2].css('a/@wikidata').map(&:text).first
+    PARTIES[party_colour][:id]
   end
 
   field :area do
-    noko.xpath('preceding::h3/span[@class="mw-headline"]').last.text
+    tds[0].text.tidy
+  end
+
+  field :area_id do
+    tds[0].css('a/@wikidata').map(&:text).first
   end
 
   private
 
   def tds
     noko.css('td')
+  end
+
+  def party_colour
+    tds[2].attr('style')[/background-color:#(\w+)/, 1]
   end
 end
 
